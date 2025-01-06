@@ -10,7 +10,10 @@ interface CreateUserUseCaseRequest {
     email: string
     cellphone: string
     cpf: string
-    password: string
+    password?: string,
+    id_google?: string,
+    google_login?: boolean
+
 }
 
 interface CreateUseCaseResponse {
@@ -33,7 +36,7 @@ export class CreateUsersUseCase {
             throw new CpfAlreadyExistsError()
         }
 
-        const password_hash = await hash(password, 6)
+        const password_hash = password ? await hash(password, 6) : ""
 
         const user = await this.usersRepository.create({
             name,
@@ -41,7 +44,9 @@ export class CreateUsersUseCase {
             email,
             cellphone,
             cpf,
-            password_hash
+            password_hash,
+            id_google: null,
+            google_login: false
         })
 
         return {

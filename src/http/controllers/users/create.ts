@@ -13,9 +13,11 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
         cellphone: z.string(),
         cpf: z.string().min(11).max(11),
         password: z.string().min(8),
+
     })
 
     const createBody = createBodySchema.parse(request.body)
+    
 
     try {
         const usersRepository = new PrismaUsersRepository()
@@ -24,6 +26,7 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
         await createUsersUseCase.execute({
             ...createBody
         })
+
     } catch(err){
         if(err instanceof EmailAlreadyExistsError || err instanceof CpfAlreadyExistsError){
             return reply.status(409).send({ message : err.message})
@@ -31,5 +34,5 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
         throw err
     }
 
-    return reply.status(201).send()
+    return reply.status(200).send({ message: 'User created successfully.' })
 }
