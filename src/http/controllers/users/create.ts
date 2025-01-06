@@ -1,12 +1,12 @@
 import { PrismaUsersRepository } from "@/repositores/prisma/prisma-users-repository";
 import { CpfAlreadyExistsError } from "@/use-cases/errors/cpf-already-exists-error";
 import { EmailAlreadyExistsError } from "@/use-cases/errors/email-already-exists-error.ts";
-import { RegisterUsersUseCase } from "@/use-cases/register-users";
+import { CreateUsersUseCase } from "@/use-cases/create-users";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
 
-export async function registerUsers(request: FastifyRequest, reply: FastifyReply) {
-    const registerBodySchema = z.object({
+export async function create(request: FastifyRequest, reply: FastifyReply) {
+    const createBodySchema = z.object({
         name: z.string(),
         social_name: z.string().optional(),
         email: z.string().email(),
@@ -15,14 +15,14 @@ export async function registerUsers(request: FastifyRequest, reply: FastifyReply
         password: z.string().min(8),
     })
 
-    const registerBody = registerBodySchema.parse(request.body)
+    const createBody = createBodySchema.parse(request.body)
 
     try {
         const usersRepository = new PrismaUsersRepository()
-        const registerUsersUseCase = new RegisterUsersUseCase(usersRepository)
+        const createUsersUseCase = new CreateUsersUseCase(usersRepository)
 
-        await registerUsersUseCase.execute({
-            ...registerBody
+        await createUsersUseCase.execute({
+            ...createBody
         })
     } catch(err){
         if(err instanceof EmailAlreadyExistsError || err instanceof CpfAlreadyExistsError){

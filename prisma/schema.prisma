@@ -19,3 +19,45 @@ model User {
 
   @@map("users")
 }
+
+enum AccountType {
+  PF
+  PJ
+}
+
+model Promoter {
+  id            String      @id @default(uuid())
+  email         String      @unique
+  password_hash String
+  bank          String
+  pix_key       String
+  account_type  AccountType
+  created_at    DateTime    @default(now())
+
+  PromoterPF PromoterPF[]
+  PromoterPJ PromoterPJ[]
+
+  @@map("promoters")
+}
+
+model PromoterPF {
+  promoter_id         String @id
+  cpf                 String @unique
+  rg                  String @unique
+  name                String
+  residencial_address String
+  business_address    String
+  cellphone           String
+
+  promoter Promoter @relation(fields: [promoter_id], references: [id])
+}
+
+model PromoterPJ {
+  promoter_id    String @id
+  cnpj           String @unique
+  comporate_name String
+  address        String
+  cellphone      String
+
+  promoter Promoter @relation(fields: [promoter_id], references: [id])
+}
