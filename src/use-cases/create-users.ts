@@ -1,10 +1,10 @@
 import { UsersRepository } from "@/repositores/users-repository";
 import { EmailAlreadyExistsError } from "./errors/email-already-exists-error.ts";
-import { CpfAlreadyExistsError } from "./errors/cpf-already-exists-error.js";
+import { CpfAlreadyExistsError } from "./errors/cpf-already-exists-error.ts";
 import { hash } from "bcryptjs";
 import { User } from "@prisma/client";
 
-interface RegisterUseCaseRequest {
+interface CreateUserUseCaseRequest {
     name: string
     social_name?: string
     email: string
@@ -13,14 +13,14 @@ interface RegisterUseCaseRequest {
     password: string
 }
 
-interface RegisterUseCaseResponse {
+interface CreateUseCaseResponse {
     user: User
 }
 
-export class RegisterUsersUseCase {
+export class CreateUsersUseCase {
     constructor(private usersRepository: UsersRepository) {}
 
-    async execute({name, social_name, email, cellphone,cpf,password} : RegisterUseCaseRequest): Promise<RegisterUseCaseResponse> {
+    async execute({name, social_name, email, cellphone,cpf,password} : CreateUserUseCaseRequest): Promise<CreateUseCaseResponse> {
         const userWithSameEmail = await this.usersRepository.findByEmail(email)
 
         if(userWithSameEmail) {

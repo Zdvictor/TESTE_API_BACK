@@ -1,16 +1,16 @@
 import { expect, describe, it } from 'vitest'
-import { RegisterUsersUseCase } from './register-users'
+import { CreateUsersUseCase } from './create-users'
 import { compare } from 'bcryptjs'
 import { InMemoryUsersRepository } from '@/repositores/in-memory/in-memory-users-repository'
 import { EmailAlreadyExistsError } from './errors/email-already-exists-error.ts'
 import { CpfAlreadyExistsError } from './errors/cpf-already-exists-error'
 
-describe('Register Users Use Case', () => {
-    it('should be able to register user', async () =>{
+describe('Create Users Use Case', () => {
+    it('should be able to create user', async () =>{
         const usersRepository = new InMemoryUsersRepository()
-        const registerUseCase = new RegisterUsersUseCase(usersRepository)
+        const createUseCase = new CreateUsersUseCase(usersRepository)
 
-        const { user } = await registerUseCase.execute({
+        const { user } = await createUseCase.execute({
             name: 'Jhon Doe',
             email: 'jhondoe@example.com',
             cpf: '12345678911',
@@ -22,9 +22,9 @@ describe('Register Users Use Case', () => {
     })
     it('should hash user password upon registration', async () =>{
         const usersRepository = new InMemoryUsersRepository()
-        const registerUseCase = new RegisterUsersUseCase(usersRepository)
+        const createUseCase = new CreateUsersUseCase(usersRepository)
 
-        const { user } = await registerUseCase.execute({
+        const { user } = await createUseCase.execute({
             name: 'Jhon Doe',
             email: 'jhondoe@example.com',
             cpf: '12345678911',
@@ -36,13 +36,13 @@ describe('Register Users Use Case', () => {
 
         expect(isPasswordCorrectlyHashed).toBe(true)
     })
-    it('should not be able to register with same email twice', async () =>{
+    it('should not be able to create with same email twice', async () =>{
         const usersRepository = new InMemoryUsersRepository()
-        const registerUseCase = new RegisterUsersUseCase(usersRepository)
+        const createUseCase = new CreateUsersUseCase(usersRepository)
 
         const email = 'jhondoe@example.com'
 
-        await registerUseCase.execute({
+        await createUseCase.execute({
             name: 'Jhon Doe',
             email,
             cpf: '12345678911',
@@ -51,7 +51,7 @@ describe('Register Users Use Case', () => {
         })
 
         expect(() => 
-            registerUseCase.execute({
+            createUseCase.execute({
                 name: 'Jhon Doe',
                 email,
                 cpf: '12345678911',
@@ -61,13 +61,13 @@ describe('Register Users Use Case', () => {
         ).rejects.toBeInstanceOf(EmailAlreadyExistsError)
 
     })
-    it('should not be able to register with same cpf twice', async () =>{
+    it('should not be able to create with same cpf twice', async () =>{
         const usersRepository = new InMemoryUsersRepository()
-        const registerUseCase = new RegisterUsersUseCase(usersRepository)
+        const createUseCase = new CreateUsersUseCase(usersRepository)
 
         const cpf = '12345678911'
 
-        await registerUseCase.execute({
+        await createUseCase.execute({
             name: 'Jhon Doe',
             email: 'jhondoe@example.com',
             cpf,
@@ -76,7 +76,7 @@ describe('Register Users Use Case', () => {
         })
 
         await expect(() => 
-            registerUseCase.execute({
+            createUseCase.execute({
                 name: 'Jhon Doe',
                 email: 'jhondoe2@example.com',
                 cpf,
