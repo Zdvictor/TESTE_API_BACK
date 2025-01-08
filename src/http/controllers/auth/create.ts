@@ -4,6 +4,8 @@ import { EmailAlreadyExistsError } from "@/use-cases/errors/email-already-exists
 import { CreateUsersUseCase } from "@/use-cases/create-users";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
+import { generateToken } from "../../../services/jwt-service";
+import { generateCookie } from "../../../services/cookies-service";
 
 export async function create(request: FastifyRequest, reply: FastifyReply) {
     const createBodySchema = z.object({
@@ -23,9 +25,15 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
         const usersRepository = new PrismaUsersRepository()
         const createUsersUseCase = new CreateUsersUseCase(usersRepository)
 
-        await createUsersUseCase.execute({
+        const user = await createUsersUseCase.execute({
             ...createBody
         })
+
+        const token = generateToken(user, "access")
+
+        generateCookie(reply, token)
+
+        return reply.status(200).send(user)
 
     } catch(err){
         if(err instanceof EmailAlreadyExistsError || err instanceof CpfAlreadyExistsError){
@@ -34,5 +42,5 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
         throw err
     }
 
-    return reply.status(200).send({ message: 'User created successfully.' })
+
 }

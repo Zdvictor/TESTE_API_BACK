@@ -3,6 +3,8 @@ import { EmailAlreadyExistsError } from "./errors/email-already-exists-error.ts"
 import { CpfAlreadyExistsError } from "./errors/cpf-already-exists-error.ts";
 import { hash } from "bcryptjs";
 import { User } from "@prisma/client";
+import { i } from "vite/dist/node/types.d-aGj9QkWt.js";
+import { generateToken, verifyToken } from "../services/jwt-service.js";
 
 interface CreateUserUseCaseRequest {
     name: string
@@ -17,7 +19,13 @@ interface CreateUserUseCaseRequest {
 }
 
 interface CreateUseCaseResponse {
-    user: User
+    name: string;
+    social_name?: string | null;
+    email: string;
+    cellphone: string | null;
+    cpf: string | null;
+    id_google?: string | null;
+    google_login?: boolean | null; 
 }
 
 export class CreateUsersUseCase {
@@ -36,7 +44,7 @@ export class CreateUsersUseCase {
             throw new CpfAlreadyExistsError()
         }
 
-        const password_hash = password ? await hash(password, 6) : ""
+        const password_hash = password ? await hash(password, 6) : null
 
         const user = await this.usersRepository.create({
             name,
@@ -49,8 +57,11 @@ export class CreateUsersUseCase {
             google_login: false
         })
 
-        return {
-            user
-        }
+        const { password_hash: _, ...userWithoutPassword } = user
+    
+
+        return  userWithoutPassword
+            
+        
     }
 }

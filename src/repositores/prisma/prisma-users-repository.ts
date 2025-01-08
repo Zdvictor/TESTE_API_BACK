@@ -22,10 +22,35 @@ export class PrismaUsersRepository implements UsersRepository {
         return user
     }
 
+    async findById(userId: string){
+        const user = await prisma.user.findUnique({
+            where: {
+                id: userId
+            }
+        })
+
+        return user
+    }
+
     async findByCpf(cpf: string){
         const user = await prisma.user.findUnique({
             where: {
                 cpf
+            }
+        })
+
+        return user
+    }
+
+    async updatePassword(userId: string, passwordHash: string) {
+
+        const user = await prisma.user.update({
+            where: {
+
+                id: userId
+            },
+            data: {
+                password_hash: passwordHash           
             }
         })
 

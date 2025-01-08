@@ -14,7 +14,7 @@ model User {
   email         String   @unique
   cellphone     String?
   cpf           String?  @unique
-  password_hash String
+  password_hash String?
   id_google     String?
   google_login  Boolean?
   created_at    DateTime @default(now())

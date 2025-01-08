@@ -8,7 +8,17 @@ interface GoogleLoginUseCaseRequest {
 }
 
 interface GoogleLoginUseCaseResponse {
-  user: User;
+  user: {
+
+    name: string;
+    social_name?: string | null;
+    email: string;
+    cellphone: string | null;
+    cpf: string | null;
+    id_google?: string | null;
+    google_login?: boolean | null;    
+
+  };
   isNewUser: boolean;
 }
 
@@ -44,10 +54,12 @@ export class GoogleLoginUseCase {
         email: email!,
         id_google: sub,
         google_login: true,
-        password_hash: "", 
+        password_hash: null, 
       });
     }
 
-    return { user, isNewUser };
+    const { password_hash, ...userWithoutPassword } = user
+        
+    return { user: userWithoutPassword, isNewUser };
   }
 }
