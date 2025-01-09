@@ -17,7 +17,9 @@ model User {
   password_hash String?
   id_google     String?
   google_login  Boolean?
+  admin         Boolean  @default(false)
   created_at    DateTime @default(now())
+  disable Boolean @default(false)
 
   @@map("users")
 }
