@@ -1,3 +1,4 @@
+import { hash } from "bcryptjs";
 import { UsersRepository } from "../repositores/users-repository";
 import { CpfAlreadyExistsError } from "./errors/cpf-already-exists-error";
 import { EmailAlreadyExistsError } from "./errors/email-already-exists-error.ts";
@@ -10,6 +11,8 @@ interface UpdateUserUseCaseRequest {
     email?: string;
     cellphone?: string;
     cpf?: string;
+    password?: string;
+    password_hash?: string
 }
 
 export class UpdateUserUseCase {
@@ -37,7 +40,14 @@ export class UpdateUserUseCase {
             }
         }
 
+        if(data.password) {
+        
+            const password_hash = await hash(data.password, 6)
+            data.password_hash = password_hash
+            delete data.password
+        }
+        console.log(data)
 
-        await this.usersRepository.update({ id, ...data });
+        return await this.usersRepository.update({ id, ...data });
     }
 }

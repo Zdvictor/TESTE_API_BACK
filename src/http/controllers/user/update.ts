@@ -5,6 +5,8 @@ import { UpdateUserUseCase } from "../../../use-cases/update-users"
 import { UserNotFoundError } from "../../../use-cases/errors/user-not-found-error"
 import { EmailAlreadyExistsError } from "../../../use-cases/errors/email-already-exists-error.ts"
 import { CpfAlreadyExistsError } from "../../../use-cases/errors/cpf-already-exists-error"
+import { generateToken } from "@/services/jwt-service"
+import { generateCookie } from "@/services/cookies-service"
 
 
 export async function update(request: FastifyRequest, reply: FastifyReply) {
@@ -17,6 +19,7 @@ export async function update(request: FastifyRequest, reply: FastifyReply) {
         email: z.string().email().optional(),
         cellphone: z.string().optional(),
         cpf: z.string().min(11).max(11).optional(),
+        password: z.string().min(8).optional(),
 
     
     })
@@ -28,11 +31,15 @@ export async function update(request: FastifyRequest, reply: FastifyReply) {
         const usersRepository = new PrismaUsersRepository()
         const updateUserUseCase = new UpdateUserUseCase(usersRepository)
 
-        await updateUserUseCase.execute({
+        const user = await updateUserUseCase.execute({
             ...updateBody
         })
 
-        return reply.status(200).send({ message: "Usuário atualizado com sucesso" })
+        const token = generateToken(user, "access")
+        
+        generateCookie(reply, token)
+
+        return reply.status(200).send(user)
 
 
     }catch(err) {
