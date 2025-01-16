@@ -4,6 +4,7 @@ import { ZodError } from 'zod';
 import { env } from './env';
 
 // PLUGINS
+import fastifySocketIO from 'fastify-socket.io';
 import fastifyRedis from '@fastify/redis';
 import fastifyJwt from '@fastify/jwt';
 import fastifyCors from '@fastify/cors';
@@ -12,6 +13,18 @@ import { JwtNotDefinedError } from './use-cases/errors/jwt-not-defined-error';
 
 
 export const app = fastify();
+
+
+app.register(fastifySocketIO, {
+
+  cors: {
+
+    origin: ['http://localhost:5173'],
+    credentials: true
+
+    
+  }
+})
 
 if (!process.env.JWT_SECRET) {
   throw new JwtNotDefinedError();
