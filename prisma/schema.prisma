@@ -20,6 +20,7 @@ model User {
   admin         Boolean  @default(false)
   created_at    DateTime @default(now())
   disable       Boolean  @default(false)
+  profile_image String?
 
   orders Order[] // Relacionamento: um usuário pode ter vários pedidos
 
@@ -34,19 +35,23 @@ enum AccountType {
 model Promoter {
   id            String      @id @default(uuid())
   email         String      @unique
-  password_hash String
-  bank          String?     // Campo opcional
-  pix_key       String?     // Campo opcional
-  account_type  AccountType
+  password_hash String?
+  bank          String?
+  pix_key       String?
+  account_type  AccountType?
+  id_google     String?
+  google_login  Boolean?
   created_at    DateTime    @default(now())
+  profile_image String?
 
-  events     Event[]
-  PromoterPF PromoterPF?
-  PromoterPJ PromoterPJ?
+  events        Event[]
+  PromoterPF    PromoterPF?
+  PromoterPJ    PromoterPJ?
+
+  orders        Order[] // Relacionamento com pedidos
 
   @@map("promoters")
 }
-
 
 model PromoterPF {
   promoter_id         String @id
@@ -57,7 +62,7 @@ model PromoterPF {
   business_address    String
   cellphone           String
 
-  promoter Promoter @relation(fields: [promoter_id], references: [id])
+  promoter Promoter @relation(fields: [promoter_id], references: [id], onDelete: Cascade)
 }
 
 model PromoterPJ {
@@ -67,8 +72,9 @@ model PromoterPJ {
   address        String
   cellphone      String
 
-  promoter Promoter @relation(fields: [promoter_id], references: [id])
+  promoter Promoter @relation(fields: [promoter_id], references: [id], onDelete: Cascade)
 }
+
 
 model Event {
 
@@ -109,26 +115,29 @@ model Event {
 }
 
 model Order {
-  id                String    @id @default(uuid())
-  referenceId       String    @unique
-  customerName      String
-  customerEmail     String
-  customerCellPhone String
-  customerTaxId     String
-  amount            Float
-  paymentMethod     String
-  installments      Int
-  chargeId          String
-  status            String
-  paidAt            DateTime?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+    id                String    @id @default(uuid())
+    referenceId       String    @unique
+    customerName      String
+    customerEmail     String
+    customerCellPhone String
+    customerTaxId     String
+    amount            Float
+    paymentMethod     String
+    installments      Int
+    chargeId          String
+    status            String
+    paidAt            DateTime?
+    createdAt         DateTime  @default(now())
+    updatedAt         DateTime  @updatedAt
 
-  userId String // Relaciona o pedido ao usuário
-  user   User   @relation(fields: [userId], references: [id]) // Relacionamento bidirecional
+    userId     String?  // Torne opcional
+    user       User?    @relation(fields: [userId], references: [id])
 
-  eventId String // Relaciona o pedido ao evento
-  event   Event  @relation(fields: [eventId], references: [id]) // Relacionamento bidirecional
+    promoterId String?  // Adicione relação com Promoter
+    promoter   Promoter? @relation(fields: [promoterId], references: [id])
 
-  @@map("orders")
+    eventId String
+    event   Event @relation(fields: [eventId], references: [id])
+
+    @@map("orders")
 }

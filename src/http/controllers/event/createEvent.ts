@@ -6,7 +6,7 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { z } from "zod";
 
 export async function createEvent(request: FastifyRequest, reply: FastifyReply) {
-  const categoryEnum = z.enum(["workshops", "shows", "theater", "courses"]);
+  const categoryEnum = z.enum(["oficinas", "shows", "teatro", "cursos"]);
 
   const createBodySchema = z.object({
 
@@ -56,9 +56,9 @@ export async function createEvent(request: FastifyRequest, reply: FastifyReply) 
     const promoterRepository = new PrismaPromoterRepository();
     const createEventUseCase = new CreateEventUseCase(eventsRepository, promoterRepository);
 
-    await createEventUseCase.execute(createEventData);
+    const event = await createEventUseCase.execute(createEventData);
 
-    reply.status(201).send({ message: "Evento criado com sucesso!" });
+    reply.status(201).send(event);
   } catch (error) {
     if(error instanceof PromoterNotFoundError) {
 

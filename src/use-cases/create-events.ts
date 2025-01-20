@@ -7,7 +7,7 @@ interface CreateEventUseCaseRequest {
     name: string;
     description: string;
     subject?: string;
-    category?: "workshops" | "shows" | "theater" | "courses";
+    category?: "oficinas" | "shows" | "teatro" | "cursos";
     expectedAudience?: number;
   
     // Datas e horários
@@ -42,7 +42,7 @@ export class CreateEventUseCase {
       private promoterRepository: PromoterRepository
     ) {}
   
-    async execute(data: CreateEventUseCaseRequest): Promise<void> {
+    async execute(data: CreateEventUseCaseRequest) {
  
       const { promoterId, ...eventData } = data;
   
@@ -50,10 +50,12 @@ export class CreateEventUseCase {
   
       if (!promoter) throw new PromoterNotFoundError()
         
-      await this.eventRepository.create({
+      const event = await this.eventRepository.create({
         ...eventData,
         promoter: { connect: { id: promoterId } },
       });
+
+      return event
     }
     
   }

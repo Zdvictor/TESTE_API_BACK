@@ -7,6 +7,7 @@ import { EmailAlreadyExistsError } from "../../../use-cases/errors/email-already
 import { CpfAlreadyExistsError } from "../../../use-cases/errors/cpf-already-exists-error"
 import { generateToken } from "@/services/jwt-service"
 import { generateCookie } from "@/services/cookies-service"
+import { MissingFieldError } from "@/use-cases/errors/missing-field-error"
 
 
 export async function update(request: FastifyRequest, reply: FastifyReply) {
@@ -28,6 +29,13 @@ export async function update(request: FastifyRequest, reply: FastifyReply) {
 
     try {
 
+        if(!updateBody.name && !updateBody.social_name && !updateBody.email && !updateBody.cellphone && !updateBody.cpf && !updateBody.password) {
+
+            throw new MissingFieldError
+    
+        }
+    
+
         const usersRepository = new PrismaUsersRepository()
         const updateUserUseCase = new UpdateUserUseCase(usersRepository)
 
@@ -44,7 +52,7 @@ export async function update(request: FastifyRequest, reply: FastifyReply) {
 
     }catch(err) {
 
-        if(err instanceof UserNotFoundError || err instanceof EmailAlreadyExistsError || err instanceof CpfAlreadyExistsError) {
+        if(err instanceof UserNotFoundError || err instanceof EmailAlreadyExistsError || err instanceof CpfAlreadyExistsError || err instanceof MissingFieldError) {
 
             return reply.status(404).send({ message: err.message })
 

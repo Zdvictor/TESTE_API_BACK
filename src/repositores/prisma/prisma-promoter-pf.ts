@@ -41,6 +41,22 @@ export class PrismaPromoterPFRepository implements PromoterPFRepository {
         return promoterPF
     }
 
+    async update(data: Prisma.PromoterPFUpdateInput & { id: string }): Promise<PromoterPF | null> {
+        const updateData = {
+          ...(data.cpf && { cpf: data.cpf }),
+          ...(data.rg && { rg: data.rg }),
+          ...(data.name && { name: data.name }),
+          ...(data.residencial_address && { residencial_address: data.residencial_address }),
+          ...(data.business_address && { business_address: data.business_address }),
+          ...(data.cellphone && { cellphone: data.cellphone }),
+        };
+      
+        return prisma.promoterPF.update({
+          where: { promoter_id: data.id },
+          data: updateData,
+        });
+      }
+      
     async delete(id: string): Promise<PromoterPF | null> {
         
         const promoterPF = await prisma.promoterPF.delete({

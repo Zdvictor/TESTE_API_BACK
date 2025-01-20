@@ -29,10 +29,56 @@ export class PrismaEventsRepository implements EventsRepository {
 
     async findAll(): Promise<Event[]> {
 
-        const events = await prisma.event.findMany()
+        const events = await prisma.event.findMany({
+            include: {
+                promoter: {
+                    include: {
+
+                        PromoterPF: true,
+                        PromoterPJ: true
+                    }
+                }
+            }
+        })
 
         return events
     }
+
+    async uploadImage(eventId: string, image: string): Promise<Event | null> {
+        
+        const event = await prisma.event.update({
+
+            where: {
+                id: eventId
+            },
+
+            data: {
+                bannerUrl: image
+            },
+
+            include: {
+
+                promoter: {
+
+                    include: {
+
+                        PromoterPF: true,
+                        PromoterPJ: true
+                    }
+                }
+            }
+        })
+
+        return event
+    }
+
+
+    async findEventByPromoterId(promoterId: string): Promise<Event[]> {
+        return prisma.event.findMany({
+          where: { promoterId: promoterId },
+        });
+      }
+      
 
     async deleteById(eventId: string): Promise<Event | null> {
 

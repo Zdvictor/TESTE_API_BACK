@@ -11,7 +11,7 @@ export async function deleteEvent(request: FastifyRequest, reply: FastifyReply){
         id: z.string(),
     });
 
-    const deleteSchema = deleteBodySchema.parse(request.body);
+    const deleteSchema = deleteBodySchema.parse(request.params);
 
 
     try {
