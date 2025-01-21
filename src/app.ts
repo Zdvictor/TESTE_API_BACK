@@ -1,9 +1,52 @@
 import fastify from 'fastify'
-import { appRoutes } from './http/routes'
+import { appRoutes } from './http/routes/index'
 import { ZodError } from 'zod'
 import { env } from './env'
 
+
+//PLUGINS
+import fastifyRedis from '@fastify/redis'
+import fastifyJwt from '@fastify/jwt'
+import fastifyCors from '@fastify/cors'
+import fastifyCookie from '@fastify/cookie'
+import { JwtNotDefinedError } from './use-cases/errors/jwt-not-defined-error'
+
 export const app = fastify()
+
+if (!process.env.JWT_SECRET) {
+  throw new JwtNotDefinedError()
+}
+
+app.register(fastifyCookie)
+
+app.register(fastifyJwt, {
+
+  secret: process.env.JWT_SECRET,
+  cookie: {
+
+    cookieName: 'token',
+    signed: false
+
+
+  }
+
+})
+
+app.register(fastifyCors, {
+
+  origin: true,
+  credentials: true
+
+})
+
+app.register(fastifyRedis, {
+
+  host: process.env.REDIS_HOST || "127.0.0.1",
+  port: parseInt(process.env.REDIS_PORT || "6379", 10)
+
+})
+
+
 
 app.register(appRoutes)
 

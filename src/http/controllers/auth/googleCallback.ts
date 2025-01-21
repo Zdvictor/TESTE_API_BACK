@@ -3,6 +3,8 @@ import { OAuth2Client } from "google-auth-library";
 import { PrismaUsersRepository } from "@/repositores/prisma/prisma-users-repository";
 import { GoogleLoginUseCase } from "../../../use-cases/google-login";
 import { UserInfoNotReturnedError } from "../../../use-cases/errors/user-info-not-returned";
+import { generateToken } from "../../../services/jwt-service";
+import { generateCookie } from "../../../services/cookies-service";
 
 
 const client = new OAuth2Client(
@@ -45,11 +47,11 @@ export async function googleAuthCallback(request: FastifyRequest, reply: Fastify
       token: tokens.id_token!,
     });
 
-    //AQUI DEPOIS APLICAR OUTRA LOGICA PARA GERAL UM JWT DEPOIS SALVAR EM COOKIE
-    return reply.status(200).send({
-      message: isNewUser ? "Usuário criado com sucesso." : "Login realizado com sucesso.",
-      user,
-    });
+    const token = generateToken(user, "access")
+  
+    generateCookie(reply, token)
+    
+    return reply.redirect("http://localhost:5173/");
   } catch (error) {
     console.error(error);
     return reply.status(500).send({ message: "Erro ao autenticar com o Google." });
