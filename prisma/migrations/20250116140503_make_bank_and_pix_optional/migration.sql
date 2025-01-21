@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "promoters" ALTER COLUMN "bank" DROP NOT NULL,
+ALTER COLUMN "pix_key" DROP NOT NULL;

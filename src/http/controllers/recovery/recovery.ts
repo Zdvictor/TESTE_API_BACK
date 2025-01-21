@@ -4,6 +4,9 @@ import { PrismaUsersRepository } from "../../../repositores/prisma/prisma-users-
 import { RecoverPasswordUseCase } from "../../../use-cases/recovery-password";
 import { EmailService } from "../../../services/email-service";
 import { InvalidEmailError } from "@/use-cases/errors/invalid-email-error";
+import { PrismaPromoterRepository } from "@/repositores/prisma/prisma-promoter-repository";
+import { PrismaPromoterPFRepository } from "@/repositores/prisma/prisma-promoter-pf";
+import { PrismaPromoterPJRepository } from "@/repositores/prisma/prisma-promoter-pj";
 
 
 export async function recoveryPassword(request: FastifyRequest, reply: FastifyReply) {
@@ -15,7 +18,10 @@ export async function recoveryPassword(request: FastifyRequest, reply: FastifyRe
   
     try {
       const usersRepository = new PrismaUsersRepository();
-      const recoverPasswordUseCase = new RecoverPasswordUseCase(usersRepository);
+      const promoteRepository = new PrismaPromoterRepository();
+      const promoterPFRepository = new PrismaPromoterPFRepository();
+      const promoterPJRepository = new PrismaPromoterPJRepository();
+      const recoverPasswordUseCase = new RecoverPasswordUseCase(usersRepository, promoteRepository, promoterPFRepository, promoterPJRepository);
   
 
       const { token, name } = await recoverPasswordUseCase.execute({ email });

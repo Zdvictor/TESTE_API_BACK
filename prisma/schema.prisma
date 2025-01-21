@@ -19,7 +19,9 @@ model User {
   google_login  Boolean?
   admin         Boolean  @default(false)
   created_at    DateTime @default(now())
-  disable Boolean @default(false)
+  disable       Boolean  @default(false)
+
+  orders Order[] // Relacionamento: um usuário pode ter vários pedidos
 
   @@map("users")
 }
@@ -33,16 +35,18 @@ model Promoter {
   id            String      @id @default(uuid())
   email         String      @unique
   password_hash String
-  bank          String
-  pix_key       String
+  bank          String?     // Campo opcional
+  pix_key       String?     // Campo opcional
   account_type  AccountType
   created_at    DateTime    @default(now())
 
-  PromoterPF PromoterPF[]
-  PromoterPJ PromoterPJ[]
+  events     Event[]
+  PromoterPF PromoterPF?
+  PromoterPJ PromoterPJ?
 
   @@map("promoters")
 }
+
 
 model PromoterPF {
   promoter_id         String @id
@@ -59,9 +63,72 @@ model PromoterPF {
 model PromoterPJ {
   promoter_id    String @id
   cnpj           String @unique
-  comporate_name String
+  corporate_name String
   address        String
   cellphone      String
 
   promoter Promoter @relation(fields: [promoter_id], references: [id])
+}
+
+model Event {
+
+  id               String   @id @default(uuid())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+
+  name             String 
+  subject          String?
+  description      String
+  category         String?
+  expectedAudience Int?
+
+
+  dateStart        DateTime
+  dateEnd          DateTime
+
+  price            Float
+  fee              Float
+  bannerUrl        String?
+
+
+  locationName     String? 
+  zipCode          String? 
+  street           String? 
+  streetNumber     String?
+  complement       String? 
+  neighborhood     String?
+  city             String?
+  state            String?
+
+  promoterId       String
+  promoter         Promoter @relation(fields: [promoterId], references: [id])
+  orders           Order[]
+
+  @@map("events") 
+}
+
+model Order {
+  id                String    @id @default(uuid())
+  referenceId       String    @unique
+  customerName      String
+  customerEmail     String
+  customerCellPhone String
+  customerTaxId     String
+  amount            Float
+  paymentMethod     String
+  installments      Int
+  chargeId          String
+  status            String
+  paidAt            DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  userId String // Relaciona o pedido ao usuário
+  user   User   @relation(fields: [userId], references: [id]) // Relacionamento bidirecional
+
+  eventId String // Relaciona o pedido ao evento
+  event   Event  @relation(fields: [eventId], references: [id]) // Relacionamento bidirecional
+
+  @@map("orders")
 }
