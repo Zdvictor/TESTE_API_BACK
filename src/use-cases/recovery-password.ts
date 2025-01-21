@@ -1,7 +1,6 @@
 import { UsersRepository } from "../repositores/users-repository";
-import { InvalidCredentialsError } from "./errors/invalid-credentials-error";
 import { generateToken } from "../services/jwt-service";
-import { User } from "@prisma/client";
+import { InvalidEmailError } from "./errors/invalid-email-error";
 
 interface RecoverPasswordUseCaseRequest {
   token: string;
@@ -13,7 +12,7 @@ export class RecoverPasswordUseCase {
   
     async execute({ email }: { email: string }): Promise<RecoverPasswordUseCaseRequest> {
       const user = await this.usersRepository.findByEmail(email);
-      if (!user) throw new InvalidCredentialsError();
+      if (!user) throw new InvalidEmailError();
   
       const token = generateToken({id: user.id}, "reset_password");
   

@@ -5,6 +5,7 @@ import { GoogleLoginUseCase } from "../../../use-cases/google-login";
 import { UserInfoNotReturnedError } from "../../../use-cases/errors/user-info-not-returned";
 import { generateToken } from "../../../services/jwt-service";
 import { generateCookie } from "../../../services/cookies-service";
+import { generateCookieWarning } from "@/services/cookies-warninng-service";
 
 
 const client = new OAuth2Client(
@@ -50,6 +51,7 @@ export async function googleAuthCallback(request: FastifyRequest, reply: Fastify
     const token = generateToken(user, "access")
   
     generateCookie(reply, token)
+    generateCookieWarning(reply, isNewUser ? 'Cadastro realizado com sucesso!' : 'Login realizado com sucesso!')
     
     return reply.redirect("http://localhost:5173/");
   } catch (error) {

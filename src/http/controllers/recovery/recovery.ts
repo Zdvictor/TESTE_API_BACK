@@ -3,7 +3,7 @@ import { z } from "zod";
 import { PrismaUsersRepository } from "../../../repositores/prisma/prisma-users-repository";
 import { RecoverPasswordUseCase } from "../../../use-cases/recovery-password";
 import { EmailService } from "../../../services/email-service";
-import { InvalidCredentialsError } from "../../../use-cases/errors/invalid-credentials-error";
+import { InvalidEmailError } from "@/use-cases/errors/invalid-email-error";
 
 
 export async function recoveryPassword(request: FastifyRequest, reply: FastifyReply) {
@@ -27,7 +27,7 @@ export async function recoveryPassword(request: FastifyRequest, reply: FastifyRe
       return reply.status(200).send({ message: "E-mail de recuperação enviado.", token: token });
     } catch (err) {
 
-        if(err instanceof InvalidCredentialsError){
+        if(err instanceof InvalidEmailError){
 
             return reply.status(400).send({ message: err.message });
 
