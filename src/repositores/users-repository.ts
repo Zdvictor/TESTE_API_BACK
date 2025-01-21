@@ -7,5 +7,6 @@ export interface UsersRepository{
     findByCpf(cpf: string): Promise<User| null>
     update(data: Prisma.UserUpdateInput): Promise<User | null>
     updatePassword(userId: string, passwordHash: string): Promise<User | null>
+    uploadImage(userId: string, image: string): Promise<User | null>
     delete(userId: string): Promise<User | null>
 }

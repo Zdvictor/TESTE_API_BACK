@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, User } from "@prisma/client";
 import { UsersRepository } from "../users-repository";
 import { prisma } from "@/lib/prisma";
 
@@ -65,6 +65,26 @@ export class PrismaUsersRepository implements UsersRepository {
             data: {
                 password_hash: passwordHash           
             }
+        })
+
+        return user
+    }
+
+    async uploadImage(userId: string, image: string): Promise<User | null> {
+        
+        const user = await prisma.user.update({
+
+            where: {
+
+                id: userId
+            },
+
+            data: {
+
+                profile_image: image
+
+            }
+
         })
 
         return user

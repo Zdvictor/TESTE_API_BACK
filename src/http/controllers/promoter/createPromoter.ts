@@ -1,5 +1,3 @@
-import { PrismaPromoterPFRepository } from "@/repositores/prisma/prisma-promoter-pf";
-import { PrismaPromoterPJRepository } from "@/repositores/prisma/prisma-promoter-pj";
 import { PrismaPromoterRepository } from "@/repositores/prisma/prisma-promoter-repository";
 import { generateCookie } from "@/services/cookies-service";
 import { generateToken } from "@/services/jwt-service";
@@ -49,9 +47,7 @@ export async function createPromoter(request: FastifyRequest, reply: FastifyRepl
   try {
 
     const promoterRepository = new PrismaPromoterRepository()
-    const promoterPFRepository = new PrismaPromoterPFRepository()
-    const promoterPJRepository = new PrismaPromoterPJRepository()
-    const createPromoterUseCase = new CreatePromoterUseCase(promoterRepository, promoterPFRepository, promoterPJRepository)
+    const createPromoterUseCase = new CreatePromoterUseCase(promoterRepository)
 
     const promoter = await createPromoterUseCase.execute(createPromoterBody)
 

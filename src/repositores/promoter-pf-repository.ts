@@ -6,5 +6,6 @@ export interface PromoterPFRepository{
     findByCpf(cpf: string): Promise<PromoterPF | null>
     findByRg(rg: string): Promise<PromoterPF | null>
     create(data: Prisma.PromoterPFCreateInput ): Promise<PromoterPF | null>
+    update(data: Prisma.PromoterPFUpdateInput): Promise<PromoterPF | null>
     delete(id: string): Promise<PromoterPF | null>
 }
