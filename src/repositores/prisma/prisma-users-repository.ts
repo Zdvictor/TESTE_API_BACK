@@ -42,6 +42,19 @@ export class PrismaUsersRepository implements UsersRepository {
         return user
     }
 
+    async update(data: Prisma.UserUpdateInput & {id: string}) {
+
+        
+        const user = await prisma.user.update({
+            where: {
+                id: data.id
+            },
+            data
+        })
+
+        return user
+    }
+
     async updatePassword(userId: string, passwordHash: string) {
 
         const user = await prisma.user.update({
@@ -55,5 +68,22 @@ export class PrismaUsersRepository implements UsersRepository {
         })
 
         return user
+    }
+
+    async delete(userId: string) {
+
+        const user = await prisma.user.update({
+
+            where: {id: userId},
+            data: {
+
+                disable: true
+
+            }
+
+        })
+
+        return user
+
     }
 }
