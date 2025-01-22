@@ -92,6 +92,7 @@ export async function createOrder(request: FastifyRequest, reply: FastifyReply) 
     }
 
     if (!user && !promoter) {
+      // Nenhum usuário ou promoter encontrado
       throw new UserNotFoundError()
     }
 
@@ -106,7 +107,7 @@ export async function createOrder(request: FastifyRequest, reply: FastifyReply) 
     // CORRIGIDO: Somar preço + taxa para cada ingresso e multiplicar pela quantidade
     const totalValueInCents = (priceInCents + fee) * ticket_quantity
 
-    const finalAmount = totalValueInCents / 100 //DEPOIS COLOCAR ESSE VALOR FINAL
+    const finalAmount = totalValueInCents / 100 
 
     // 6) Montar request para PagSeguro
     const referenceId = uuidv4()
@@ -133,6 +134,7 @@ export async function createOrder(request: FastifyRequest, reply: FastifyReply) 
             reference_id: event_id,
             name: event_name,
             quantity: ticket_quantity,
+            // Cada item usa "unit_amount" em centavos
             unit_amount: priceInCents,
           },
         ],
