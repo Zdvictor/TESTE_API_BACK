@@ -19,6 +19,8 @@ export class findOrderUserUseCase {
 
         const orders = await this.ordersRepository.findOrderByUserId(id);
 
+        console.log(orders)
+
         if(orders?.length === 0) throw new OrderNotFoundError;
 
         return orders;

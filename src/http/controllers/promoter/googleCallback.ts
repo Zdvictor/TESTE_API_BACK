@@ -16,9 +16,19 @@ const client = new OAuth2Client(
   process.env.GOOGLE_REDIRECT_URI_PROMOTER
 );
 
+const url = process.env.APP_URL! 
+
 
 export async function googleAuthCallbackPromoter(request: FastifyRequest, reply: FastifyReply) {
-  const { code } = request.query as { code: string };
+  const { code, error } = request.query as { code: string, error?: string };
+
+    // Tratamento do erro ao cancelar o login
+  if (error === "access_denied") {
+  
+      generateCookieWarning(reply, "Cancelado pelo usuário");
+      return reply.redirect(url);
+      
+  }
 
   if (!code) {
     return reply.status(400).send({ error: "Código de autorização não fornecido pelo Google." });

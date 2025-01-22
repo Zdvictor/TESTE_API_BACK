@@ -116,7 +116,8 @@ model Event {
 
 model Order {
     id                String    @id @default(uuid())
-    referenceId       String    @unique
+    referenceId       String
+    ticketUniqueId    String?   @unique
     customerName      String
     customerEmail     String
     customerCellPhone String
@@ -130,14 +131,15 @@ model Order {
     createdAt         DateTime  @default(now())
     updatedAt         DateTime  @updatedAt
 
-    userId     String?  // Torne opcional
+    userId     String?  
     user       User?    @relation(fields: [userId], references: [id])
 
-    promoterId String?  // Adicione relação com Promoter
+    promoterId String?  
     promoter   Promoter? @relation(fields: [promoterId], references: [id])
 
-    eventId String
-    event   Event @relation(fields: [eventId], references: [id])
+    eventId    String    
+    event      Event     @relation(fields: [eventId], references: [id])
 
     @@map("orders")
 }
+

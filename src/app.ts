@@ -2,6 +2,7 @@ import fastify from "fastify";
 import { appRoutes } from "./http/routes/index";
 import { ZodError } from "zod";
 import { env } from "./env";
+import formbody from "@fastify/formbody";
 
 // PLUGINS
 import fastifySocketIO from "fastify-socket.io";
@@ -26,6 +27,8 @@ app.register(fastifySocketIO, {
 if (!process.env.JWT_SECRET) {
   throw new JwtNotDefinedError();
 }
+
+app.register(formbody);
 
 app.register(fastifyCookie);
 

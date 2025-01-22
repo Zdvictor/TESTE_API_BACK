@@ -15,7 +15,7 @@ export class FindEventUseCase {
     async execute({id}: EventUseCaseRequest) {
 
         const event = await this.eventRepository.findById(id);
-
+        
         if(!event) throw new EventNotFoundError;
 
         return event;

@@ -14,7 +14,7 @@ import { promoterRoutes } from './promoter'
 //import { authGuard } from '../middlewares/auth-guard'
 
 export async function appRoutes(app: FastifyInstance) {
-
+  
   await app.register(homeRoutes)
   await app.register(authRoutes)
   await app.register(userRoutes)
