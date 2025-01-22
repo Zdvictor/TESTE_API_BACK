@@ -1,10 +1,12 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { OAuth2Client } from "google-auth-library";
 
+const url = process.env.SERVER_URL! 
+
 const client = new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
-  "http://localhost:3333/auth/google/callback"
+  `${url}/auth/google/callback`
 );
 
 

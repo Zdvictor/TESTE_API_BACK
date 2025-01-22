@@ -15,7 +15,7 @@ import QRCode from "qrcode";
 
     }catch(error) {
 
-        throw new Error("Erro ao gerar Qr Code " + error.message)
+        throw new Error("Erro ao gerar Qr Code " + (error as any).message)
 
     }
 

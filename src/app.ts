@@ -17,9 +17,11 @@ import path from "path";
 
 export const app = fastify();
 
+const url = process.env.APP_URL!
+
 app.register(fastifySocketIO, {
   cors: {
-    origin: ["http://localhost:5173"],
+    origin: url,
     credentials: true,
   },
 });

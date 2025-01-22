@@ -12,6 +12,7 @@ import { MissingFieldError } from "@/use-cases/errors/missing-field-error"
 
 export async function update(request: FastifyRequest, reply: FastifyReply) {
 
+    console.log(request.body)
     const updateBodySchema = z.object({
 
         id: z.string(),

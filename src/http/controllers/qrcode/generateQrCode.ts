@@ -9,14 +9,12 @@ export async function generateQrCode(request: FastifyRequest, reply: FastifyRepl
 
         ticketId: z.string(),
         referenceId: z.string(),
-        customerName: z.string(),
-        customerEmail: z.string().email(),
-        eventName: z.string(),
+        eventId: z.string(),
 
 
     })
 
-    const {ticketId, referenceId, customerName, customerEmail, eventName} = generateQrCodeBodySchema.parse(request.body)
+    const {ticketId, referenceId, eventId} = generateQrCodeBodySchema.parse(request.body)
 
     try {
 
@@ -24,19 +22,19 @@ export async function generateQrCode(request: FastifyRequest, reply: FastifyRepl
         const qrData = JSON.stringify({
             ticketId,
             referenceId,
-            customerName,
-            customerEmail,
-            eventName
+            eventId
         })
 
         
         const qrCode = await generateQrCodeUtils(qrData);
 
+        reply.send(qrCode);
+
 
     }catch(error) {
 
-
-        console.log(error);
+        reply.log.error(error);
+        reply.status(500).send({ message: "Erro ao gerar QR Code." });
     }
 
 }
