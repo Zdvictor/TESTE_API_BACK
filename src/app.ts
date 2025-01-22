@@ -47,10 +47,18 @@ app.register(fastifyCors, {
   credentials: true,
 });
 
+
+//APENAS DEPLOY
 app.register(fastifyRedis, {
-  host: process.env.REDIS_HOST || "127.0.0.1",
-  port: parseInt(process.env.REDIS_PORT || "6379", 10),
+  url: process.env.REDIS_URL || "redis://default:MDMxxufVJWJXK1JjDnqblXxrFeVkWsBB9@redis-1234.c15.us-east-1-4.ec2.cloud.redislabs.com:6379",
 });
+
+
+//VOLTAR AQUI EM AMBIENTE DE DESENVOLVIMENTO
+// app.register(fastifyRedis, {
+//   host: process.env.REDIS_HOST || "127.0.0.1",
+//   port: parseInt(process.env.REDIS_PORT || "6379", 10),
+// });
 
 // Configuração do fastifyStatic para servir arquivos da pasta "uploads"
 app.register(fastifyStatic, {
