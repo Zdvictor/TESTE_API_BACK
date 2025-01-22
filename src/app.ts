@@ -21,10 +21,11 @@ const url = process.env.APP_URL!
 
 app.register(fastifySocketIO, {
   cors: {
-    origin: url,
-    credentials: true,
+    origin: '*',  // Permite qualquer origem
+    credentials: true,  // Permite o envio de credenciais (cookies, autenticação, etc.)
   },
 });
+
 
 if (!process.env.JWT_SECRET) {
   throw new JwtNotDefinedError();
@@ -43,8 +44,9 @@ app.register(fastifyJwt, {
 });
 
 app.register(fastifyCors, {
-  origin: true,
-  credentials: true,
+  origin: true,  // Permite qualquer origem
+  credentials: true,  // Permite cookies
+  methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],  // Permite os métodos necessários
 });
 
 
