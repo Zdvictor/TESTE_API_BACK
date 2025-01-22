@@ -10,6 +10,7 @@ import { PrismaPromoterPFRepository } from "@/repositores/prisma/prisma-promoter
 import { PrismaPromoterPJRepository } from "@/repositores/prisma/prisma-promoter-pj";
 
 
+
 const client = new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
@@ -61,8 +62,8 @@ export async function googleAuthCallbackPromoter(request: FastifyRequest, reply:
     
     return reply.redirect(
       isNewUser
-        ? "http://localhost:5173/producer-dashboard"
-        : "http://localhost:5173/"
+        ? `${url}/producer-dashboard`
+        : url
     );
   } catch (error) {
     console.error(error);

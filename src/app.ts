@@ -17,12 +17,15 @@ import path from "path";
 
 export const app = fastify();
 
+const url = process.env.APP_URL!
+
 app.register(fastifySocketIO, {
   cors: {
-    origin: ["http://localhost:5173"],
-    credentials: true,
+    origin: '*',  // Permite qualquer origem
+    credentials: true,  // Permite o envio de credenciais (cookies, autenticação, etc.)
   },
 });
+
 
 if (!process.env.JWT_SECRET) {
   throw new JwtNotDefinedError();
@@ -41,14 +44,27 @@ app.register(fastifyJwt, {
 });
 
 app.register(fastifyCors, {
-  origin: true,
-  credentials: true,
+  origin: process.env.APP_URL || 'http://localhost:5173',  // Use a URL específica do seu front-end
+  credentials: true,  // Permite cookies, tokens, etc.
+  methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],  // Cabeçalhos permitidos
+  preflightContinue: false,  // Não continuar após o preflight
 });
 
+
+
+
+//APENAS DEPLOY
 app.register(fastifyRedis, {
-  host: process.env.REDIS_HOST || "127.0.0.1",
-  port: parseInt(process.env.REDIS_PORT || "6379", 10),
+  url: process.env.REDIS_URL || "redis://default:MDMxxufVJWJXK1JjDnqblXxrFeVkWsBB9@redis-1234.c15.us-east-1-4.ec2.cloud.redislabs.com:6379",
 });
+
+
+//VOLTAR AQUI EM AMBIENTE DE DESENVOLVIMENTO
+// app.register(fastifyRedis, {
+//   host: process.env.REDIS_HOST || "127.0.0.1",
+//   port: parseInt(process.env.REDIS_PORT || "6379", 10),
+// });
 
 // Configuração do fastifyStatic para servir arquivos da pasta "uploads"
 app.register(fastifyStatic, {

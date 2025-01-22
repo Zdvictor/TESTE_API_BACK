@@ -9,6 +9,7 @@ import { chatBotRoutes } from './chatbot'
 import { paymentRoutes } from './payment'
 import EventRoutes from './event'
 import { promoterRoutes } from './promoter'
+import { qrcodeRoutes } from './qrcode'
 
 //COMING SOON
 //import { authGuard } from '../middlewares/auth-guard'
@@ -23,6 +24,7 @@ export async function appRoutes(app: FastifyInstance) {
   await app.register(paymentRoutes)
   await app.register(EventRoutes)
   await app.register(promoterRoutes)
+  await app.register(qrcodeRoutes)
   
   
 }
