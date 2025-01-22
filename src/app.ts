@@ -46,8 +46,11 @@ app.register(fastifyJwt, {
 app.register(fastifyCors, {
   origin: true,  // Permite qualquer origem
   credentials: true,  // Permite cookies
-  methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],  // Permite os métodos necessários
+  methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],  // Cabeçalhos permitidos
+  preflightContinue: false,  // Não continuar após o preflight
 });
+
 
 
 //APENAS DEPLOY
