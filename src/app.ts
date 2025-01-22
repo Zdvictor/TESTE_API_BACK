@@ -44,12 +44,13 @@ app.register(fastifyJwt, {
 });
 
 app.register(fastifyCors, {
-  origin: true,  // Permite qualquer origem
-  credentials: true,  // Permite cookies
+  origin: process.env.APP_URL || 'http://localhost:5173',  // Use a URL específica do seu front-end
+  credentials: true,  // Permite cookies, tokens, etc.
   methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],  // Cabeçalhos permitidos
   preflightContinue: false,  // Não continuar após o preflight
 });
+
 
 
 
