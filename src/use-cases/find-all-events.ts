@@ -11,7 +11,7 @@ export class FindAllEventsUseCase {
 
         const events = await this.eventsRepository.findAll();
 
-        if(!events) throw new EventsNotFoundError;
+        if(events.length === 0) throw new EventsNotFoundError;
 
         return events
 

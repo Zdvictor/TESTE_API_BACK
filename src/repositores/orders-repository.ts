@@ -3,6 +3,7 @@ import { Order } from "@prisma/client";
 export interface OrderRepository {
   create(data: {
     referenceId: string
+    ticketUniqueId: string
     customerName: string
     customerEmail: string
     customerCellPhone: string
@@ -13,7 +14,7 @@ export interface OrderRepository {
     status: string
     paidAt: Date | null
     paymentMethod: string
-
+ 
     userId?: string | null
     promoterId?: string | null
 
@@ -26,6 +27,6 @@ export interface OrderRepository {
     reference_id: string
     status: string
     paid_at?: string
-  }): Promise<Order>
+  }): Promise<number>
 
 }

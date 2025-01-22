@@ -10,6 +10,7 @@ import { UserNotFoundError } from "@/use-cases/errors/user-not-found-error"
 import { PrismaEventsRepository } from "@/repositores/prisma/prisma-events-repository"
 import { EventNotFoundError } from "@/use-cases/errors/event-not-found-error"
 import { PrismaPromoterRepository } from "@/repositores/prisma/prisma-promoter-repository"
+import generateTicket from "@/services/generate-ticket-service"
 
 const token = process.env.PAGSEGURO_TOKEN
 const notificationUrl = process.env.PAGSEGURO_NOTIFICATION_URL
@@ -91,7 +92,6 @@ export async function createOrder(request: FastifyRequest, reply: FastifyReply) 
     }
 
     if (!user && !promoter) {
-      // Nenhum usuário ou promoter encontrado
       throw new UserNotFoundError()
     }
 
@@ -106,7 +106,7 @@ export async function createOrder(request: FastifyRequest, reply: FastifyReply) 
     // CORRIGIDO: Somar preço + taxa para cada ingresso e multiplicar pela quantidade
     const totalValueInCents = (priceInCents + fee) * ticket_quantity
 
-    const finalAmount = totalValueInCents / 100
+    const finalAmount = totalValueInCents / 100 //DEPOIS COLOCAR ESSE VALOR FINAL
 
     // 6) Montar request para PagSeguro
     const referenceId = uuidv4()
@@ -133,7 +133,6 @@ export async function createOrder(request: FastifyRequest, reply: FastifyReply) 
             reference_id: event_id,
             name: event_name,
             quantity: ticket_quantity,
-            // Cada item usa "unit_amount" em centavos
             unit_amount: priceInCents,
           },
         ],
@@ -215,25 +214,31 @@ export async function createOrder(request: FastifyRequest, reply: FastifyReply) 
     const orderRepository = new PrismaOrderRepository()
     const createOrderUseCase = new CreateOrderUseCase(orderRepository)
 
-    await createOrderUseCase.execute({
-      referenceId,
-      customerName: name,
-      customerEmail: email,
-      customerCellPhone: cellphone,
-      customerTaxId: cpf,
-      amount: finalAmount, // Valor calculado no backend
-      paymentMethod,
-      installments,
-      chargeId:
-        response.data.qr_codes?.[0]?.id ||
-        response.data.charges?.[0]?.id ||
-        "",
-      status: "PENDING",
-      paidAt: null,
-      userId: user ? user.id : null,
-      promoterId: promoter ? promoter.id : null,
-      eventId: event_id,
-    })
+    for(let i = 0; i < ticket_quantity; i++) {
+
+      await createOrderUseCase.execute({
+        referenceId,
+        ticketUniqueId: generateTicket(),
+        customerName: name,
+        customerEmail: email,
+        customerCellPhone: cellphone,
+        customerTaxId: cpf,
+        amount: ticket_quantity > 1 ? finalAmount / ticket_quantity : finalAmount,
+        paymentMethod,
+        installments,
+        chargeId:
+          response.data.qr_codes?.[0]?.id ||
+          response.data.charges?.[0]?.id ||
+          "",
+        status: "PENDING",
+        paidAt: null,
+        userId: user ? user.id : null,
+        promoterId: promoter ? promoter.id : null,
+        eventId: event_id,
+      })
+
+    }
+
 
     // 9) Retornar sucesso
     return reply.send({

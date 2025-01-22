@@ -4,6 +4,7 @@ import { UserNotFoundError } from "./errors/user-not-found-error";
 
 interface CreateOrderUseCaseRequest {
   referenceId: string;
+  ticketUniqueId: string;
   customerName: string;
   customerEmail: string;
   customerCellPhone: string;
@@ -25,9 +26,7 @@ export class CreateOrderUseCase {
   ) {}
 
   async execute(data: CreateOrderUseCaseRequest): Promise<void> {
-    // Salvar o pedido usando o repositório
-    //ADICIONAR VALIDACAO DE PROCURAR EVENTO PELO ID E USUARIO ANTES DE CRIAR O PEDIDO!!!
-    console.log(data)
+    
     await this.orderRepository.create(data);
 
   }

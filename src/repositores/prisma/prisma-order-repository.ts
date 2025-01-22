@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma"
 
 interface CreateOrderData {
   referenceId: string
+  ticketUniqueId: string
   customerName: string
   customerEmail: string
   customerCellPhone: string
@@ -23,6 +24,7 @@ export class PrismaOrderRepository implements OrderRepository {
   async create(data: CreateOrderData): Promise<Order> {
     const {
       referenceId,
+      ticketUniqueId,
       customerName,
       customerEmail,
       customerCellPhone,
@@ -41,6 +43,7 @@ export class PrismaOrderRepository implements OrderRepository {
     return prisma.order.create({
       data: {
         referenceId,
+        ticketUniqueId,
         customerName,
         customerEmail,
         customerCellPhone,
@@ -79,7 +82,11 @@ export class PrismaOrderRepository implements OrderRepository {
   async findOrderByUserId(id: string): Promise<Order[]> {
     return prisma.order.findMany({
       where: {
-        userId: id,
+        OR: [
+
+          {userId: id},
+          {promoterId: id}
+        ]
       },
       include: {
         event: true,
@@ -96,8 +103,8 @@ export class PrismaOrderRepository implements OrderRepository {
     reference_id: string
     status: string
     paid_at?: string
-  }): Promise<Order> {
-    const order = await prisma.order.update({
+  }): Promise<number> {
+    const { count } = await prisma.order.updateMany({
       where: {
         referenceId: reference_id,
       },
@@ -107,6 +114,6 @@ export class PrismaOrderRepository implements OrderRepository {
       },
     })
 
-    return order
+    return count
   }
 }

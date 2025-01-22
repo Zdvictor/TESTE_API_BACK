@@ -7,6 +7,7 @@ const client = new OAuth2Client(
   "http://localhost:3333/auth/google/callback"
 );
 
+
 export async function redirectToGoogle(request: FastifyRequest, reply: FastifyReply) {
   const authUrl = client.generateAuthUrl({
     access_type: "offline",
