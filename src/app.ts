@@ -19,10 +19,11 @@ export const app = fastify();
 
 app.register(fastifySocketIO, {
   cors: {
-    origin: ["http://localhost:5173"],
-    credentials: true,
+    origin: ["http://localhost:5173"], // Define explicitamente os domínios permitidos
+    credentials: true, // Permite o envio de cookies ou credenciais
   },
 });
+
 
 if (!process.env.JWT_SECRET) {
   throw new JwtNotDefinedError();
@@ -41,8 +42,8 @@ app.register(fastifyJwt, {
 });
 
 app.register(fastifyCors, {
-  origin: true,
-  credentials: true,
+  origin: ["http://localhost:5173"], // Domínios permitidos
+  credentials: true, // Permite cookies e credenciais
 });
 
 app.register(fastifyRedis, {
