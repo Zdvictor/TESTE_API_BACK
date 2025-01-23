@@ -13,13 +13,12 @@ import fastifyCookie from "@fastify/cookie";
 import fastifyMultipart from "@fastify/multipart";
 import fastifyStatic from "@fastify/static";
 import path from "path";
-import { JwtNotDefinedError } from "./use-cases/errors/jwt-not-defined-error";
 
 export const app = fastify({ logger: true }); // Logger habilitado para monitorar requisições
 
 // Validar se variáveis obrigatórias estão presentes
 if (!process.env.JWT_SECRET) {
-  throw new Error("JWT_SECRET is not defined"); 
+  throw new Error("JWT_SECRET is not defined");
 }
 if (!process.env.APP_URL) {
   throw new Error("APP_URL is not defined");
@@ -62,6 +61,7 @@ app.register(fastifyRedis, {
 }).ready((err) => {
   if (err) {
     app.log.error("Redis connection failed:", err.message);
+    process.exit(1); // Interrompa a execução se o Redis falhar
   } else {
     app.log.info("Redis connected successfully");
   }
@@ -88,6 +88,7 @@ app.setErrorHandler((error, _request, reply) => {
     });
   }
 
+  // Log de erros em ambiente de desenvolvimento
   if (env.NODE_ENV !== "production") {
     console.error(error);
   }
@@ -98,7 +99,7 @@ app.setErrorHandler((error, _request, reply) => {
 // Monitoramento de inicialização do servidor
 app.listen({ port: 3333, host: "0.0.0.0" }, (err, address) => {
   if (err) {
-    app.log.error(err);
+    app.log.error("Error starting server:", err.message);
     process.exit(1);
   }
   app.log.info(`Server running at ${address}`);
