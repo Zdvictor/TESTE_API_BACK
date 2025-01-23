@@ -21,10 +21,11 @@ const url = process.env.APP_URL!
 
 app.register(fastifySocketIO, {
   cors: {
-    origin: '*',  // Permite qualquer origem
-    credentials: true,  // Permite o envio de credenciais (cookies, autenticação, etc.)
+    origin: process.env.APP_URL || 'http://localhost:5173', // Especifica o domínio permitido
+    credentials: true, // Permite envio de credenciais
   },
 });
+
 
 
 if (!process.env.JWT_SECRET) {
