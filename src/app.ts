@@ -97,10 +97,10 @@ app.setErrorHandler((error, _request, reply) => {
 });
 
 // Monitoramento de inicialização do servidor
-app.listen({ port: 3333, host: "0.0.0.0" }, (err, address) => {
+app.listen({ port: process.env.PORT || 3333, host: "0.0.0.0" }, (err, address) => {
   if (err) {
     app.log.error("Error starting server:", err.message);
     process.exit(1);
   }
-  app.log.info(`Server running at ${address}`);
+  app.log.info(`🚀 Server running at ${address}`);
 });
