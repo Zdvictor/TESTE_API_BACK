@@ -19,7 +19,7 @@ export const app = fastify({ logger: true }); // Logger habilitado para monitora
 
 // Validar se variáveis obrigatórias estão presentes
 if (!process.env.JWT_SECRET) {
-  throw new JwtNotDefinedError("JWT_SECRET is not defined");
+  throw new Error("JWT_SECRET is not defined"); 
 }
 if (!process.env.APP_URL) {
   throw new Error("APP_URL is not defined");
