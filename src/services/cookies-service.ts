@@ -6,7 +6,7 @@ export function generateCookie(reply: FastifyReply, token: string) {
 
         httpOnly: true,
         secure: true, // Produção: true (HTTPS)
-        sameSite: "strict",
+        sameSite: "none",
         path: "/",
         maxAge: 86400,
 
